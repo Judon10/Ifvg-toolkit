@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFVG Toolkit</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background: #22c55e;
+            color: white;
+            font-weight: bold;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        li {
+            padding: 10px;
+            background: #334155;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        li.checked {
+            background: #22c55e;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>IFVG Toolkit</h2>
+
+        <h3>Risk Calculator</h3>
+        <input type="number" id="balance" placeholder="Account Balance">
+        <input type="number" id="risk" placeholder="Risk %">
+        <input type="number" id="stoploss" placeholder="Stop Loss (pips)">
+        <button onclick="calculate()">Calculate</button>
+        <div id="result"></div>
+
+        <h3>IFVG Checklist</h3>
+        <ul id="checklist">
+            <li>Identify HTF structure</li>
+            <li>Mark FVG on HTF high/low</li>
+            <li>Confirm liquidity points</li>
+            <li>Check trend direction</li>
+            <li>Set stop loss</li>
+            <li>Set take profit</li>
+            <li>Confirm entry with lower timeframe</li>
+        </ul>
+        <button onclick="resetChecklist()">Reset Checklist</button>
+    </div>
+
+    <script>
+        function calculate() {
+            let balance = parseFloat(document.getElementById("balance").value);
+            let risk = parseFloat(document.getElementById("risk").value);
+            let stoploss = parseFloat(document.getElementById("stoploss").value);
+
+            if (isNaN(balance) || isNaN(risk) || isNaN(stoploss) || stoploss === 0) {
+                document.getElementById("result").innerText = "⚠️ Enter valid numbers!";
+                return;
+            }
+
+            let riskAmount = (balance * risk) / 100;
+            let lotSize = riskAmount / stoploss;
+
+            let advice = "";
+            if (risk > 2) advice = "⚠️ High risk";
+            else if (risk < 1) advice = "✅ Safe";
+            else advice = "👍 Moderate";
+
+            document.getElementById("result").innerHTML =
+                "Risk: $" + riskAmount.toFixed(2) +
+                " | Lot: " + lotSize.toFixed(2) +
+                "<br>" + advice;
+        }
+
+        const items = document.querySelectorAll("#checklist li");
+        items.forEach(item => {
+            item.addEventListener("click", () => {
+                item.classList.toggle("checked");
+            });
+        });
+
+        function resetChecklist() {
+            items.forEach(item => item.classList.remove("checked"));
+        }
+    </script>
+</body>
+</html>
